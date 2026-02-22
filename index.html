@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignment Manager</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="h-full bg-[#1a1a2e] text-white font-['DM_Sans']">
+
+<div id="app-container" class="h-full w-full overflow-auto">
+
+  <!-- Login Screen -->
+  <div id="login-screen" class="h-full w-full flex items-center justify-center p-4">
+    <div class="text-center">
+      <h1 class="text-4xl font-bold mb-6">Assignment Manager</h1>
+      <div class="space-y-3">
+        <button id="student-login-btn" class="w-40 py-4 rounded-xl font-semibold bg-[#4cc9f0]">
+          Student Login
+        </button>
+        <button id="teacher-login-btn" class="w-40 py-4 rounded-xl font-semibold bg-[#f72585]">
+          Teacher Login
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student View -->
+  <div id="student-view" class="hidden max-w-4xl mx-auto px-4 py-8">
+    <div class="flex justify-between mb-6">
+      <h1 class="text-3xl font-bold">Your Assignments</h1>
+      <button id="student-logout-btn" class="px-4 py-2 bg-gray-700 rounded">
+        Logout
+      </button>
+    </div>
+
+    <div id="student-info" class="mb-6"></div>
+    <div id="student-assignments-list"></div>
+  </div>
+
+  <!-- Teacher View -->
+<div id="teacher-view" class="hidden max-w-5xl mx-auto px-4 py-8">
+
+  <div class="flex justify-between mb-6">
+    <h1 class="text-3xl font-bold">Teacher Dashboard</h1>
+    <button id="teacher-logout-btn" class="px-4 py-2 bg-gray-700 rounded">
+      Logout
+    </button>
+  </div>
+
+  <form id="teacher-form" class="space-y-4 mb-8">
+    <input id="assign-title" required placeholder="Title"
+      class="w-full p-2 rounded bg-gray-800">
+
+    <input id="assign-subject" required placeholder="Subject"
+      class="w-full p-2 rounded bg-gray-800">
+
+    <textarea id="assign-desc" required placeholder="Description"
+      class="w-full p-2 rounded bg-gray-800"></textarea>
+
+    <input type="date" id="assign-due" required
+      class="w-full p-2 rounded bg-gray-800">
+
+    <select id="assign-division" required
+      class="w-full p-2 rounded bg-gray-800">
+      <option value="">Select Division</option>
+      <option value="1">Division 1</option>
+      <option value="2">Division 2</option>
+      <option value="3">Division 3</option>
+      <option value="4">Division 4</option>
+      <option value="5">Division 5</option>
+    </select>
+
+    <button class="w-full py-3 bg-[#f72585] rounded">
+      Create Assignment
+    </button>
+  </form>
+
+  <!-- Assignment List -->
+  <div id="teacher-assignments-list"></div>
+
+  <!-- 🔥 ADD THIS RIGHT HERE -->
+  <div id="assignment-detail-view" class="hidden"></div>
+
+</div>
+
+</div>
+
+<script src="script.js" ></script>
+</body>
+</html>
