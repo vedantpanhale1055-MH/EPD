@@ -4,19 +4,16 @@ let currentUser = null;
 let generatedOTP = null;
 let activeStudent = null;
 
-// Add emails to your student database here
+// ✅ Student list updated with your specific details
 const VALID_STUDENTS = [
-  { roll: "1", name: "Aarav Sharma", division: "1", email: "aarav@example.com" },
+  { roll: "1", name: "Vedant Panhale", division: "1", email: "vedantpanhale.01@gmail.com" },
   { roll: "2", name: "Bhavna Singh", division: "1", email: "bhavna@example.com" },
-  { roll: "3", name: "Chirag Patel", division: "2", email: "chirag@example.com" },
-  { roll: "4", name: "Divya Desai", division: "2", email: "divya@example.com" },
-  { roll: "5", name: "Emaan Khan", division: "3", email: "emaan@example.com" }
+  { roll: "3", name: "Chirag Patel", division: "2", email: "chirag@example.com" }
 ];
 
 // Initialize EmailJS with your Public Key
 (function() {
-    // Replace "YOUR_PUBLIC_KEY" with the one from your EmailJS Account tab
-    emailjs.init("YOUR_PUBLIC_KEY");
+    emailjs.init("98gZm8ipWNkhRgl-e"); 
 })();
 
 function saveAssignments() {
@@ -25,13 +22,12 @@ function saveAssignments() {
 
 /* ================= STUDENT LOGIN LOGIC ================= */
 
-// Show the student form when the main button is clicked
 document.getElementById("student-login-btn").onclick = () => {
     document.getElementById("role-selection").classList.add("hidden");
     document.getElementById("student-login-form").classList.remove("hidden");
 };
 
-// STEP 1: Verify all 4 fields (Div, Name, Roll, Email)
+// STEP 1: Verify all 4 fields
 document.getElementById("verify-details-btn").onclick = function() {
     const div = document.getElementById("login-div").value.trim();
     const name = document.getElementById("login-name").value.trim().toLowerCase();
@@ -51,7 +47,7 @@ document.getElementById("verify-details-btn").onclick = function() {
         document.getElementById("input-fields").classList.add("opacity-50", "pointer-events-none");
         document.getElementById("otp-request-container").classList.remove("hidden");
     } else {
-        alert("Verification Failed! One or more details do not match our records. Please try again.");
+        alert("Verification Failed! Details do not match our records.");
     }
 };
 
@@ -62,20 +58,20 @@ document.getElementById("send-otp-btn").onclick = function() {
     this.disabled = true;
     this.innerText = "Sending Code...";
 
-    // These parameters must match the variables in your EmailJS Template
     const templateParams = {
         to_name: activeStudent.name,
         to_email: activeStudent.email,
         otp_code: generatedOTP
     };
 
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams)
+    // Using your specific Service (service_hl3w7ql) and Template (template_42er2vp)
+    emailjs.send('service_hl3w7ql', 'template_42er2vp', templateParams)
         .then(() => {
             alert("Verification code sent to " + activeStudent.email);
             document.getElementById("otp-request-container").classList.add("hidden");
             document.getElementById("otp-verify-section").classList.remove("hidden");
         }, (error) => {
-            alert("Email failed to send. Please check your internet or EmailJS keys.");
+            alert("Email failed to send. Check console.");
             console.error("EmailJS Error:", error);
             this.disabled = false;
             this.innerText = "Send OTP to Email";
@@ -90,7 +86,7 @@ document.getElementById("final-login-btn").onclick = function() {
         currentUser = { type: "student", ...activeStudent };
         showStudentView();
     } else {
-        alert("Invalid Code. Please check the email sent to you.");
+        alert("Invalid Code. Please check your email.");
     }
 };
 
@@ -126,7 +122,7 @@ function showTeacherView() {
   renderTeacherAssignments();
 }
 
-/* ================= CORE LOGIC (Remains Unchanged) ================= */
+/* ================= CORE LOGIC ================= */
 
 function renderStudentAssignments() {
   const list = document.getElementById("student-assignments-list");
