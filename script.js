@@ -1,5 +1,15 @@
+/* ================= GLOBAL DATA ================= */
 let assignments = JSON.parse(localStorage.getItem("assignments")) || [];
 let currentUser = null;
+
+// This is your "Database" of valid students
+const VALID_STUDENTS = [
+  { roll: "1", name: "Aarav Sharma", division: "1" },
+  { roll: "2", name: "Bhavna Singh", division: "1" },
+  { roll: "3", name: "Chirag Patel", division: "2" },
+  { roll: "4", name: "Divya Desai", division: "2" },
+  { roll: "5", name: "Emaan Khan", division: "3" }
+];
 
 function saveAssignments() {
   localStorage.setItem("assignments", JSON.stringify(assignments));
@@ -8,14 +18,36 @@ function saveAssignments() {
 /* ================= LOGIN ================= */
 
 document.getElementById("student-login-btn").onclick = () => {
-  const division = prompt("Enter Division (1-5)");
-  const name = prompt("Enter Your Name");
-  const roll = prompt("Enter Roll Number");
+  let authenticated = false;
 
-  if (!division || !name || !roll) return;
+  // We use a while loop to give them "another chance" until they get it right or cancel
+  while (!authenticated) {
+    const division = prompt("Enter Division (1-5)");
+    if (division === null) break; // User clicked cancel
 
-  currentUser = { type: "student", division, name, roll };
-  showStudentView();
+    const name = prompt("Enter Your Name");
+    if (name === null) break;
+
+    const roll = prompt("Enter Roll Number");
+    if (roll === null) break;
+
+    // VERIFICATION LOGIC
+    // We look for a student that matches all 3 criteria
+    const foundStudent = VALID_STUDENTS.find(s => 
+      s.division === division && 
+      s.name.toLowerCase() === name.toLowerCase().trim() && 
+      s.roll === roll
+    );
+
+    if (foundStudent) {
+      currentUser = { type: "student", ...foundStudent };
+      authenticated = true;
+      showStudentView();
+    } else {
+      const retry = confirm("Student not found! The details do not match our records.\n\nWould you like to try again?");
+      if (!retry) break; // Exit the loop if they don't want to retry
+    }
+  }
 };
 
 document.getElementById("teacher-login-btn").onclick = () => {
@@ -49,7 +81,6 @@ function renderStudentAssignments() {
   assignments
     .filter(a => a.division === currentUser.division)
     .forEach((a) => {
-
       const submitted = Array.isArray(a.submissions) &&
         a.submissions.some(s => s.roll === currentUser.roll);
 
@@ -116,13 +147,8 @@ function openAssignment(index) {
     a.submissions = [];
   }
 
-  const students = [
-    { roll: "1", name: "Aarav Sharma" },
-    { roll: "2", name: "Bhavna Singh" },
-    { roll: "3", name: "Chirag Patel" },
-    { roll: "4", name: "Divya Desai" },
-    { roll: "5", name: "Emaan Khan" }
-  ];
+  // We filter our global database to show only students from the division assigned to this task
+  const studentsInDivision = VALID_STUDENTS.filter(s => s.division === a.division);
 
   let html = `
     <h2 class="text-2xl font-bold mb-2">${a.title}</h2>
@@ -133,15 +159,13 @@ function openAssignment(index) {
     <h3 class="mt-4 font-bold">Students in Division ${a.division}</h3>
   `;
 
-  students.forEach(student => {
-
+  studentsInDivision.forEach(student => {
     const submitted = a.submissions.some(
       s => s.roll === student.roll
     );
 
     html += `
       <div class="bg-[#1e1f3a] p-4 rounded-lg mb-3 flex justify-between items-center">
-
         <span class="text-white font-medium">
           Roll ${student.roll}: ${student.name}
         </span>
@@ -155,7 +179,6 @@ function openAssignment(index) {
 
           ${submitted ? '✓ Submitted' : 'Not Submitted'}
         </button>
-
       </div>
     `;
   });
