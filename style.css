@@ -1,10 +1,33 @@
 body {
-  box-sizing: border-box;
+    background-color: #1a1a2e !important;
+    color: white !important;
+    margin: 0;
+    font-family: 'DM Sans', sans-serif;
 }
 
 .card {
-  background: #27ff8c;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
+    background: #252542;
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    border: 1px solid #374151;
+}
+
+input, select, textarea {
+    background: #1a1a2e !important;
+    color: white !important;
+    outline: none;
+}
+
+button {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Added these for the JS Verify step */
+.opacity-50 {
+    opacity: 0.5;
+}
+
+.pointer-events-none {
+    pointer-events: none;
 }

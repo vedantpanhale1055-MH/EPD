@@ -1,103 +1,89 @@
-<!doctype html>
-<html lang="en" class="h-full">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Assignment Manager</title>
-  
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
+<body class="min-h-screen flex items-center justify-center bg-[#1a1a2e]">
 
-<body class="h-full bg-[#1a1a2e] text-white font-['DM_Sans']">
-
-<div id="app-container" class="h-full w-full overflow-auto">
-
-  <div id="login-screen" class="h-full w-full flex items-center justify-center p-4">
-    <div class="text-center w-full max-w-md">
-      <h1 class="text-4xl font-bold mb-6">Assignment Manager</h1>
-      
-      <div id="role-selection" class="space-y-3">
-        <button id="student-login-btn" class="w-40 py-4 rounded-xl font-semibold bg-[#4cc9f0] text-gray-900">
-          Student Login
-        </button>
-        <button id="teacher-login-btn" class="w-40 py-4 rounded-xl font-semibold bg-[#f72585]">
-          Teacher Login
-        </button>
-      </div>
-
-      <div id="student-login-form" class="hidden space-y-4 bg-[#252542] p-6 rounded-2xl shadow-xl mt-4">
-        <h2 class="text-xl font-bold text-[#4cc9f0]">Student Verification</h2>
+    <div id="app-container" class="w-full max-w-md px-4 py-8">
         
-        <div id="input-fields" class="space-y-3">
-          <input id="login-div" type="text" placeholder="Division (1-5)" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 outline-none focus:border-[#4cc9f0]">
-          <input id="login-name" type="text" placeholder="Full Name" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 outline-none focus:border-[#4cc9f0]">
-          <input id="login-roll" type="text" placeholder="Roll Number" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 outline-none focus:border-[#4cc9f0]">
-          <input id="login-email" type="email" placeholder="Registered Email" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 outline-none focus:border-[#4cc9f0]">
+        <div id="login-screen" class="text-center">
+            <h1 class="text-4xl font-bold mb-10 text-white">Assignment Manager</h1>
+            
+            <div id="role-selection" class="flex flex-row justify-center gap-4">
+                <button id="student-login-btn" class="w-40 py-4 rounded-2xl font-bold bg-[#4cc9f0] text-gray-900 shadow-lg hover:scale-105 transition-transform">
+                    Student Login
+                </button>
+                <button id="teacher-login-btn" class="w-40 py-4 rounded-2xl font-bold bg-[#f72585] text-white shadow-lg hover:scale-105 transition-transform">
+                    Teacher Login
+                </button>
+            </div>
+
+            <div id="student-login-form" class="hidden space-y-4 bg-[#252542] p-6 rounded-2xl shadow-2xl mt-8 border border-gray-700">
+                <h2 class="text-xl font-bold text-[#4cc9f0]">Student Verification</h2>
+                
+                <div id="input-fields" class="space-y-3 text-left">
+                    <input id="login-div" type="text" placeholder="Division (1-5)" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
+                    <input id="login-name" type="text" placeholder="Full Name" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
+                    <input id="login-roll" type="text" placeholder="Roll Number" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
+                    <input id="login-email" type="email" placeholder="Registered Email" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
+                </div>
+                
+                <button id="verify-details-btn" class="w-full py-3 rounded-xl font-bold bg-[#4cc9f0] text-[#1a1a2e]">Verify Details</button>
+
+                <div id="otp-request-container" class="hidden space-y-3 pt-4 border-t border-gray-600">
+                    <p class="text-green-400 font-bold">✅ Details Matched!</p>
+                    <button id="send-otp-btn" class="w-full py-3 rounded-xl font-bold bg-[#4cc9f0] text-[#1a1a2e]">Send OTP to Email</button>
+                </div>
+                
+                <div id="otp-verify-section" class="hidden space-y-3 pt-4 border-t border-gray-600 text-left">
+                    <label class="text-sm text-gray-400">Enter 4-digit code:</label>
+                    <input id="login-otp" type="text" placeholder="0000" maxlength="4" class="w-full p-3 text-center tracking-widest text-xl rounded-xl bg-[#1a1a2e] border border-gray-600 text-white">
+                    <button id="final-login-btn" class="w-full py-3 rounded-xl font-bold bg-green-500 text-white">Login Now</button>
+                </div>
+                
+                <button onclick="location.reload()" class="text-gray-400 text-xs underline mt-2 block mx-auto">Back</button>
+            </div>
         </div>
-        
-        <button id="verify-details-btn" class="w-full py-3 rounded-xl font-bold bg-[#4cc9f0] text-[#1a1a2e]">
-          Verify Details
-        </button>
 
-        <div id="otp-request-container" class="hidden pt-4 border-t border-gray-600">
-          <p class="text-green-400 text-sm mb-3">✅ Details Matched!</p>
-          <button id="send-otp-btn" class="w-full py-3 rounded-xl font-bold bg-[#f72585]">
-            Send OTP to Email
-          </button>
-          <button onclick="location.reload()" class="mt-2 text-gray-400 text-xs underline block mx-auto">Back to Edit</button>
+        <div id="student-view" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-white">Your Assignments</h1>
+                <button id="student-logout-btn" class="px-4 py-2 bg-gray-700 rounded-lg text-sm text-white">Logout</button>
+            </div>
+            <div id="student-info" class="mb-6 p-4 bg-[#252542] rounded-xl border-l-4 border-[#4cc9f0] text-white"></div>
+            <div id="student-assignments-list"></div>
         </div>
 
-        <div id="otp-verify-section" class="hidden pt-4 border-t border-gray-600">
-          <p class="text-sm mb-2 text-gray-300">Enter the 4-digit code</p>
-          <input id="login-otp" type="text" maxlength="4" placeholder="0000" class="w-full p-3 rounded-xl bg-[#1a1a2e] text-center tracking-widest text-xl font-bold border-2 border-[#f72585] outline-none">
-          <button id="final-login-btn" class="w-full mt-3 py-3 rounded-xl font-bold bg-[#10b981]">
-            Login Now
-          </button>
+        <div id="teacher-view" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold text-white">Teacher Panel</h1>
+                <button id="teacher-logout-btn" class="px-4 py-2 bg-gray-700 rounded-lg text-sm text-white">Logout</button>
+            </div>
+            
+            <form id="teacher-form" class="space-y-3 mb-8 bg-[#252542] p-4 rounded-xl border border-gray-700">
+                <input id="assign-title" placeholder="Assignment Title" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600" required>
+                <input id="assign-subject" placeholder="Subject" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600" required>
+                <textarea id="assign-desc" placeholder="Description" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600"></textarea>
+                <input id="assign-due" type="date" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600">
+                <select id="assign-division" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600">
+                    <option value="1">Division 1</option>
+                    <option value="2">Division 2</option>
+                </select>
+                <button type="submit" class="w-full py-2 bg-[#f72585] rounded font-bold">Create Assignment</button>
+            </form>
+
+            <div id="teacher-assignments-list"></div>
+            <div id="assignment-detail-view" class="hidden bg-[#252542] p-6 rounded-2xl border border-gray-700"></div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="student-view" class="hidden max-w-4xl mx-auto px-4 py-8">
-    <div class="flex justify-between mb-6">
-      <h1 class="text-3xl font-bold">Your Assignments</h1>
-      <button id="student-logout-btn" class="px-4 py-2 bg-gray-700 rounded">Logout</button>
-    </div>
-    <div id="student-info" class="mb-6 p-4 bg-[#252542] rounded-xl border-l-4 border-[#4cc9f0]"></div>
-    <div id="student-assignments-list"></div>
-  </div>
-
-  <div id="teacher-view" class="hidden max-w-5xl mx-auto px-4 py-8">
-    <div class="flex justify-between mb-6">
-      <h1 class="text-3xl font-bold">Teacher Dashboard</h1>
-      <button id="teacher-logout-btn" class="px-4 py-2 bg-gray-700 rounded">Logout</button>
     </div>
 
-    <form id="teacher-form" class="space-y-4 mb-8">
-      <input id="assign-title" required placeholder="Title" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:border-[#f72585] outline-none">
-      <input id="assign-subject" required placeholder="Subject" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:border-[#f72585] outline-none">
-      <textarea id="assign-desc" required placeholder="Description" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:border-[#f72585] outline-none"></textarea>
-      <input type="date" id="assign-due" required class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:border-[#f72585] outline-none">
-      <select id="assign-division" required class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:border-[#f72585] outline-none">
-        <option value="">Select Division</option>
-        <option value="1">Division 1</option>
-        <option value="2">Division 2</option>
-        <option value="3">Division 3</option>
-        <option value="4">Division 4</option>
-        <option value="5">Division 5</option>
-      </select>
-      <button class="w-full py-3 bg-[#f72585] rounded font-bold">Create Assignment</button>
-    </form>
-
-    <div id="teacher-assignments-list"></div>
-    <div id="assignment-detail-view" class="hidden"></div>
-  </div>
-
-</div>
-
-<script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
