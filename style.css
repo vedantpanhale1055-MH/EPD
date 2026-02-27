@@ -1,33 +1,251 @@
-body {
-    background-color: #1a1a2e !important;
-    color: white !important;
+/* 1. Global Reset & Variables */
+:root {
+    --bg-dark: #1a1a2e;
+    --bg-card: #252542;
+    --bg-input: #16162a;
+    --accent-student: #4cc9f0;
+    --accent-teacher: #f72585;
+    --text-white: #ffffff;
+    --text-gray: #94a3b8;
+    --success: #22c55e;
+    --danger: #ef4444;
+}
+
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
     font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    min-height: 100-vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.6;
 }
 
-.card {
-    background: #252542;
-    padding: 20px;
-    border-radius: 16px;
-    margin-bottom: 20px;
+/* 2. Layout Containers */
+#app-container {
+    width: 100%;
+    max-width: 450px;
+    padding: 2rem 1rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 3. Typography */
+h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 2.5rem; text-align: center; }
+h2 { font-size: 1.25rem; margin-bottom: 1rem; }
+
+/* 4. Login Buttons (Role Selection) */
+#role-selection {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+#student-login-btn, #teacher-login-btn {
+    width: 160px;
+    padding: 1rem;
+    border: none;
+    border-radius: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+#student-login-btn { background-color: var(--accent-student); color: var(--bg-dark); }
+#teacher-login-btn { background-color: var(--accent-teacher); color: white; }
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* 5. Forms & Inputs */
+#student-login-form, #teacher-form, #assignment-detail-view {
+    background-color: var(--bg-card);
+    padding: 1.5rem;
+    border-radius: 1.25rem;
     border: 1px solid #374151;
+    margin-top: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-input, select, textarea {
-    background: #1a1a2e !important;
-    color: white !important;
+input, textarea, select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--bg-input);
+    border: 1px solid #4b5563;
+    border-radius: 0.75rem;
+    color: white;
     outline: none;
+    font-size: 1rem;
 }
 
-button {
-    transition: all 0.2s ease-in-out;
+input:focus {
+    border-color: var(--accent-student);
 }
 
-/* Added these for the JS Verify step */
-.opacity-50 {
-    opacity: 0.5;
+/* 6. Dashboard Styles (Student & Teacher Views) */
+.view-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 
-.pointer-events-none {
-    pointer-events: none;
+#student-info {
+    padding: 1rem;
+    background-color: var(--bg-card);
+    border-left: 4px solid var(--accent-student);
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 7. Assignment Cards */
+.card {
+    background-color: var(--bg-card);
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border: 1px solid #374151;
+    margin-bottom: 1rem;
+}
+
+.card h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
+.card p { color: var(--text-gray); font-size: 0.875rem; }
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.bg-green { background-color: var(--success); color: white; }
+.bg-gray { background-color: #4b5563; color: white; }
+
+/* 8. Teacher Specifics */
+#teacher-assignments-list .card {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#teacher-assignments-list .card:hover {
+    background-color: #2e2e54;
+}
+
+.delete-btn {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: var(--danger);
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-btn:hover { background-color: var(--danger); color: white; }
+
+/* 9. Responsiveness */
+@media (max-width: 480px) {
+    #role-selection {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #student-login-btn, #teacher-login-btn {
+        width: 100%;
+    }
+}
+/* Styling for the 'Verify Details' button */
+#verify-details-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--accent-student); /* #4cc9f0 */
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.2s ease;
+}
+
+#verify-details-btn:hover {
+    background-color: #3bb2d6; /* Slightly darker cyan on hover */
+    transform: translateY(-2px);
+}
+
+/* Styling for the 'Back' button link */
+#student-login-form button[onclick="location.reload()"] {
+    background: transparent;
+    border: none;
+    color: var(--text-gray);
+    font-size: 0.85rem;
+    text-decoration: underline;
+    cursor: pointer;
+    margin: 1rem auto 0;
+    display: block;
+    transition: color 0.2s;
+}
+
+#student-login-form button[onclick="location.reload()"]:hover {
+    color: var(--text-white);
+}
+
+/* Styling for the 'Send OTP' and 'Login Now' buttons */
+#send-otp-btn, #final-login-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+#send-otp-btn {
+    background-color: var(--accent-student);
+    color: var(--bg-dark);
+}
+
+#final-login-btn {
+    background-color: var(--success); /* Green for final action */
+    color: white;
+}
+/* Modal Overlay */
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.z-50 { z-index: 50; }
+.bg-black\/70 { background-color: rgba(0, 0, 0, 0.7); }
+.backdrop-blur-sm { backdrop-filter: blur(4px); }
+
+#teacher-modal .flex-1 {
+    flex: 1;
+    transition: transform 0.2s;
+}
+
+#teacher-modal button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+#teacher-pin-input:focus {
+    border-color: var(--accent-teacher);
+    box-shadow: 0 0 10px rgba(247, 37, 133, 0.3);
 }

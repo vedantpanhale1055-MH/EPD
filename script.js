@@ -92,14 +92,29 @@ document.getElementById("final-login-btn").onclick = function() {
 
 /* ================= TEACHER LOGIN ================= */
 
+// Replace your existing teacher login button click logic
 document.getElementById("teacher-login-btn").onclick = () => {
-  const pin = prompt("Enter Teacher PIN (1234)");
-  if (pin === "1234") {
-    currentUser = { type: "teacher" };
-    showTeacherView();
-  } else {
-    alert("Wrong PIN");
-  }
+    document.getElementById("teacher-modal").classList.remove("hidden");
+    document.getElementById("teacher-pin-input").focus();
+};
+
+// Handle Cancel button
+document.getElementById("modal-cancel-btn").onclick = () => {
+    document.getElementById("teacher-modal").classList.add("hidden");
+    document.getElementById("teacher-pin-input").value = "";
+};
+
+// Handle Confirm button
+document.getElementById("modal-confirm-btn").onclick = () => {
+    const pinInput = document.getElementById("teacher-pin-input").value;
+    if (pinInput === "1234") {
+        document.getElementById("teacher-modal").classList.add("hidden");
+        currentUser = { type: "teacher" };
+        showTeacherView();
+    } else {
+        alert("Wrong PIN. Please try again.");
+        document.getElementById("teacher-pin-input").value = "";
+    }
 };
 
 /* ================= VIEW TRANSITIONS ================= */
