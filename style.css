@@ -295,31 +295,90 @@ input:focus {
 }
 
 /* Teacher Detail View: Mark Submitted (Blue) */
-/* Teacher Detail View: Mark Submitted (Medium Size) */
+/* ================= FUNCTIONAL BUTTONS ================= */
+
+/* Logout Buttons */
+#student-logout-btn, #teacher-logout-btn {
+    padding: 0.5rem 1rem;
+    background-color: #374151;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+/* Create Assignment Button */
+/* ================= FUNCTIONAL BUTTONS (MODERN & MEDIUM) ================= */
+
+/* 1. Logout Buttons (Top Right) */
+#student-logout-btn, #teacher-logout-btn {
+    padding: 0.5rem 1rem;
+    background-color: #374151;
+    color: white;
+    border: none;
+    border-radius: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#student-logout-btn:hover, #teacher-logout-btn:hover { background-color: var(--danger); }
+
+/* 2. Create Assignment Button (Teacher Form) */
+#teacher-form button[type="submit"] {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--accent-teacher);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+
+/* 3. Delete Button (Teacher Card) */
+button[onclick*="deleteAssignment"] {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--danger);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+button[onclick*="deleteAssignment"]:hover { background-color: var(--danger); color: white; }
+
+/* 4. MARKED & MARK SUBMITTED (MEDIUM SIZE) */
+/* These use !important to ensure they override the large defaults */
+
+/* Blue/Gray - Mark Submitted */
 .bg-gray-700 {
     background-color: #374151 !important;
     color: var(--text-gray) !important;
-    padding: 0.4rem 0.9rem !important; /* Reduced padding for medium size */
-    border-radius: 0.6rem !important;
-    border: none;
+    padding: 0.4rem 0.9rem !important; 
+    font-size: 0.75rem !important;
+    border-radius: 0.5rem !important;
+    border: none !important;
+    font-weight: 700 !important;
     cursor: pointer;
-    font-size: 0.75rem !important; /* Smaller text for a balanced look */
-    font-weight: 700;
 }
 
-/* Teacher Detail View: Marked (Medium Size) */
+/* Cyan - Marked */
 .bg-cyan-500 {
     background-color: var(--accent-student) !important;
     color: var(--bg-dark) !important;
-    padding: 0.4rem 0.9rem !important; /* Reduced padding for medium size */
-    border-radius: 0.6rem !important;
-    border: none;
-    cursor: pointer;
+    padding: 0.4rem 0.9rem !important;
     font-size: 0.75rem !important;
-    font-weight: 700;
+    border-radius: 0.5rem !important;
+    border: none !important;
+    font-weight: 700 !important;
+    cursor: pointer;
 }
 
-/* 5. Back to List Button (In Assignment Detail) */
+/* 5. Back to List Button (Pink) */
 #back-btn {
     width: 100%;
     margin-top: 1.5rem;
@@ -331,6 +390,7 @@ input:focus {
     font-weight: 700;
     cursor: pointer;
 }
+
 
 /* Ensure the student row in detail view is aligned properly */
 #assignment-detail-view .flex.justify-between.items-center {
