@@ -21,7 +21,7 @@ body {
     font-family: 'DM Sans', sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-white);
-    min-height: 100-vh;
+    min-height: 100vh; /* Fixed the dash error */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -35,6 +35,7 @@ body {
     padding: 2rem 1rem;
 }
 
+/* Crucial: Ensuring hidden elements stay hidden */
 .hidden {
     display: none !important;
 }
@@ -43,7 +44,7 @@ body {
 h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 2.5rem; text-align: center; }
 h2 { font-size: 1.25rem; margin-bottom: 1rem; }
 
-/* 4. Login Buttons (Role Selection) */
+/* 4. Main Role Selection Buttons */
 #role-selection {
     display: flex;
     gap: 1rem;
@@ -94,7 +95,7 @@ input:focus {
     border-color: var(--accent-student);
 }
 
-/* 6. Dashboard Styles (Student & Teacher Views) */
+/* 6. Dashboard & Cards */
 .view-header {
     display: flex;
     justify-content: space-between;
@@ -110,7 +111,6 @@ input:focus {
     margin-bottom: 1.5rem;
 }
 
-/* 7. Assignment Cards */
 .card {
     background-color: var(--bg-card);
     padding: 1.25rem;
@@ -122,62 +122,10 @@ input:focus {
 .card h3 { font-size: 1.1rem; margin-bottom: 0.25rem; }
 .card p { color: var(--text-gray); font-size: 0.875rem; }
 
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 1rem;
-}
-
-/* Status Badges */
-.status-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.bg-green { background-color: var(--success); color: white; }
-.bg-gray { background-color: #4b5563; color: white; }
-
-/* 8. Teacher Specifics */
-#teacher-assignments-list .card {
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-#teacher-assignments-list .card:hover {
-    background-color: #2e2e54;
-}
-
-.delete-btn {
-    background-color: rgba(239, 68, 68, 0.2);
-    color: var(--danger);
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-}
-
-.delete-btn:hover { background-color: var(--danger); color: white; }
-
-/* 9. Responsiveness */
-@media (max-width: 480px) {
-    #role-selection {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    #student-login-btn, #teacher-login-btn {
-        width: 100%;
-    }
-}
-/* Styling for the 'Verify Details' button */
-#verify-details-btn {
+/* 7. Specific Student Login Buttons */
+#verify-details-btn, #send-otp-btn, #final-login-btn {
     width: 100%;
     padding: 0.8rem;
-    background-color: var(--accent-student); /* #4cc9f0 */
-    color: var(--bg-dark);
     border: none;
     border-radius: 0.75rem;
     font-weight: 700;
@@ -186,12 +134,9 @@ input:focus {
     transition: all 0.2s ease;
 }
 
-#verify-details-btn:hover {
-    background-color: #3bb2d6; /* Slightly darker cyan on hover */
-    transform: translateY(-2px);
-}
+#verify-details-btn, #send-otp-btn { background-color: var(--accent-student); color: var(--bg-dark); }
+#final-login-btn { background-color: var(--success); color: white; }
 
-/* Styling for the 'Back' button link */
 #student-login-form button[onclick="location.reload()"] {
     background: transparent;
     border: none;
@@ -201,51 +146,196 @@ input:focus {
     cursor: pointer;
     margin: 1rem auto 0;
     display: block;
-    transition: color 0.2s;
 }
 
-#student-login-form button[onclick="location.reload()"]:hover {
-    color: var(--text-white);
-}
-
-/* Styling for the 'Send OTP' and 'Login Now' buttons */
-#send-otp-btn, #final-login-btn {
+/* 8. Teacher Modal (Correctly Centered) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;    /* Center Vertically */
+    justify-content: center; /* Center Horizontally */
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: var(--bg-card);
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    border: 1px solid #444;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+}
+
+.modal-title { color: var(--accent-teacher); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem; }
+.modal-subtitle { color: var(--text-gray); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+#teacher-pin-input {
+    width: 100%;
+    padding: 1rem;
+    text-align: center;
+    font-size: 1.5rem;
+    letter-spacing: 0.5rem;
+    background: var(--bg-input);
+    border: 2px solid #374151;
+    border-radius: 1rem;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+#teacher-pin-input:focus { border-color: var(--accent-teacher); outline: none; }
+
+.modal-button-group {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-cancel, .btn-login {
+    flex: 1;
     padding: 0.8rem;
     border: none;
     border-radius: 0.75rem;
     font-weight: 700;
     cursor: pointer;
-    margin-top: 0.5rem;
+    transition: all 0.2s ease;
 }
 
-#send-otp-btn {
-    background-color: var(--accent-student);
-    color: var(--bg-dark);
+.btn-cancel { background-color: #374151; color: var(--text-gray); }
+.btn-login { background-color: var(--accent-teacher); color: white; }
+
+.btn-login:hover { background-color: #ff3399; transform: translateY(-2px); }
+.btn-cancel:hover { background-color: #4b5563; color: white; }
+
+/* 9. Responsiveness */
+@media (max-width: 480px) {
+    #role-selection { flex-direction: column; align-items: center; }
+    #student-login-btn, #teacher-login-btn { width: 100%; }
+}
+/* ================= NEW FUNCTIONAL BUTTON STYLES ================= */
+
+/* 1. Logout Buttons (Top Right) */
+#student-logout-btn, #teacher-logout-btn {
+    padding: 0.6rem 1.2rem;
+    background-color: #374151;
+    color: var(--text-white);
+    border: none;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
-#final-login-btn {
-    background-color: var(--success); /* Green for final action */
+#student-logout-btn:hover, #teacher-logout-btn:hover {
+    background-color: var(--danger); /* Turns red on hover */
+}
+
+/* 2. Create Assignment Button (Inside Teacher Form) */
+#teacher-form button[type="submit"] {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--accent-teacher);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: transform 0.2s, filter 0.2s;
+}
+
+#teacher-form button[type="submit"]:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* 3. Delete Button (Inside Teacher Cards) */
+.delete-btn, button[onclick*="deleteAssignment"] {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--danger);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--danger);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover, button[onclick*="deleteAssignment"]:hover {
+    background-color: var(--danger);
     color: white;
 }
-/* Modal Overlay */
-.fixed { position: fixed; }
-.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-.z-50 { z-index: 50; }
-.bg-black\/70 { background-color: rgba(0, 0, 0, 0.7); }
-.backdrop-blur-sm { backdrop-filter: blur(4px); }
 
-#teacher-modal .flex-1 {
-    flex: 1;
-    transition: transform 0.2s;
+/* 4. Marked / Mark Submitted / Pending Status Buttons */
+/* Matches the class colors generated by your JavaScript */
+
+/* Student View: Pending */
+.bg-gray-500 {
+    background-color: #4b5563 !important;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    border: none;
 }
 
-#teacher-modal button:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.1);
+/* Student View: Submitted */
+.bg-green-500 {
+    background-color: var(--success) !important;
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.5rem;
+    border: none;
 }
 
-#teacher-pin-input:focus {
-    border-color: var(--accent-teacher);
-    box-shadow: 0 0 10px rgba(247, 37, 133, 0.3);
+/* Teacher Detail View: Mark Submitted (Blue) */
+/* Teacher Detail View: Mark Submitted (Medium Size) */
+.bg-gray-700 {
+    background-color: #374151 !important;
+    color: var(--text-gray) !important;
+    padding: 0.4rem 0.9rem !important; /* Reduced padding for medium size */
+    border-radius: 0.6rem !important;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem !important; /* Smaller text for a balanced look */
+    font-weight: 700;
+}
+
+/* Teacher Detail View: Marked (Medium Size) */
+.bg-cyan-500 {
+    background-color: var(--accent-student) !important;
+    color: var(--bg-dark) !important;
+    padding: 0.4rem 0.9rem !important; /* Reduced padding for medium size */
+    border-radius: 0.6rem !important;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem !important;
+    font-weight: 700;
+}
+
+/* 5. Back to List Button (In Assignment Detail) */
+#back-btn {
+    width: 100%;
+    margin-top: 1.5rem;
+    padding: 0.8rem;
+    background-color: var(--accent-teacher);
+    color: white;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Ensure the student row in detail view is aligned properly */
+#assignment-detail-view .flex.justify-between.items-center {
+    padding: 0.8rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
 }

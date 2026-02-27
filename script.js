@@ -92,31 +92,43 @@ document.getElementById("final-login-btn").onclick = function() {
 
 /* ================= TEACHER LOGIN ================= */
 
-// Replace your existing teacher login button click logic
-document.getElementById("teacher-login-btn").onclick = () => {
-    document.getElementById("teacher-modal").classList.remove("hidden");
-    document.getElementById("teacher-pin-input").focus();
-};
+/* ================= TEACHER LOGIN ================= */
 
-// Handle Cancel button
-document.getElementById("modal-cancel-btn").onclick = () => {
-    document.getElementById("teacher-modal").classList.add("hidden");
-    document.getElementById("teacher-pin-input").value = "";
-};
+// Wrap in window.onload to ensure HTML elements exist before attaching events
+window.addEventListener('load', () => {
+    const teacherLoginBtn = document.getElementById("teacher-login-btn");
+    const teacherModal = document.getElementById("teacher-modal");
+    const pinInput = document.getElementById("teacher-pin-input");
+    const cancelBtn = document.getElementById("modal-cancel-btn");
+    const confirmBtn = document.getElementById("modal-confirm-btn");
 
-// Handle Confirm button
-document.getElementById("modal-confirm-btn").onclick = () => {
-    const pinInput = document.getElementById("teacher-pin-input").value;
-    if (pinInput === "1234") {
-        document.getElementById("teacher-modal").classList.add("hidden");
-        currentUser = { type: "teacher" };
-        showTeacherView();
-    } else {
-        alert("Wrong PIN. Please try again.");
-        document.getElementById("teacher-pin-input").value = "";
+    if (teacherLoginBtn) {
+        teacherLoginBtn.onclick = () => {
+            teacherModal.classList.remove("hidden");
+            pinInput.focus();
+        };
     }
-};
 
+    if (cancelBtn) {
+        cancelBtn.onclick = () => {
+            teacherModal.classList.add("hidden");
+            pinInput.value = "";
+        };
+    }
+
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            if (pinInput.value === "1234") {
+                teacherModal.classList.add("hidden");
+                currentUser = { type: "teacher" };
+                showTeacherView();
+            } else {
+                alert("Wrong PIN. Please try again.");
+                pinInput.value = "";
+            }
+        };
+    }
+});
 /* ================= VIEW TRANSITIONS ================= */
 
 function showStudentView() {
