@@ -1,144 +1,203 @@
-/* ================= GLOBAL DATA ================= */
+/* ===============================
+   ASSIGNMENT MANAGER — SCRIPT.JS
+   =============================== */
+
+/* ---- GLOBAL STATE ---- */
 let assignments = JSON.parse(localStorage.getItem("assignments")) || [];
-let currentUser = null;
+let currentUser  = null;
 let generatedOTP = null;
 let activeStudent = null;
 
-// ✅ Student list
+/* ---- STUDENT ROSTER ---- */
 const VALID_STUDENTS = [
-  { roll: "1", name: "Vedant Panhale", division: "1", email: "vedantpanhale.01@gmail.com" },
-  { roll: "2", name: "Bhavna Singh", division: "1", email: "bhavna@example.com" },
-  { roll: "3", name: "Chirag Patel", division: "2", email: "chirag@example.com" }
+    { roll: "1", name: "Vedant Panhale",  division: "1", email: "vedantpanhale.01@gmail.com" },
+    { roll: "2", name: "Bhavna Singh",    division: "1", email: "bhavna@example.com" },
+    { roll: "3", name: "Chirag Patel",    division: "2", email: "chirag@example.com" }
 ];
 
-// Initialize EmailJS with your Public Key
-(function() {
-    emailjs.init("98gZm8ipWNkhRgl-e"); 
-})();
+/* ---- TEACHER PIN ---- */
+const TEACHER_PIN = "1234";
+
+/* ---- EMAILJS INIT ---- */
+(function () { emailjs.init("98gZm8ipWNkhRgl-e"); })();
+
+/* ===========================
+   UTILITY FUNCTIONS
+   =========================== */
 
 function saveAssignments() {
     localStorage.setItem("assignments", JSON.stringify(assignments));
 }
 
-/* ================= STUDENT LOGIN LOGIC ================= */
+/**
+ * Show a toast notification.
+ * @param {string} msg   - Message to display
+ * @param {'success'|'error'|'info'} type
+ * @param {number} duration  - ms before hiding (default 3000)
+ */
+function showToast(msg, type = "info", duration = 3000) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.className = `toast toast-${type}`;
+    toast.classList.remove("hidden");
+
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.add("hidden"), duration);
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return "No due date";
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+/* ===========================
+   LOGIN — STUDENT FLOW
+   =========================== */
 
 document.getElementById("student-login-btn").onclick = () => {
     document.getElementById("role-selection").classList.add("hidden");
     document.getElementById("student-login-form").classList.remove("hidden");
 };
 
-// STEP 1: Verify all 4 fields (Before sending OTP)
-document.getElementById("verify-details-btn").onclick = function() {
-    const div = document.getElementById("login-div").value.trim();
-    const name = document.getElementById("login-name").value.trim().toLowerCase();
-    const roll = document.getElementById("login-roll").value.trim();
+// STEP 1 — Verify details
+document.getElementById("verify-details-btn").onclick = function () {
+    const div   = document.getElementById("login-div").value.trim();
+    const name  = document.getElementById("login-name").value.trim().toLowerCase();
+    const roll  = document.getElementById("login-roll").value.trim();
     const email = document.getElementById("login-email").value.trim().toLowerCase();
 
-    const found = VALID_STUDENTS.find(s => 
-        s.division === div && 
-        s.name.toLowerCase() === name && 
+    if (!div || !name || !roll || !email) {
+        showToast("Please fill in all fields.", "error");
+        return;
+    }
+
+    const found = VALID_STUDENTS.find(s =>
+        s.division === div &&
+        s.name.toLowerCase() === name &&
         s.roll === roll &&
         s.email.toLowerCase() === email
     );
 
     if (found) {
         activeStudent = found;
-        // Lock inputs and show the Send OTP button section
-        document.getElementById("input-fields").classList.add("opacity-50", "pointer-events-none");
-        this.classList.add("hidden"); 
+        document.getElementById("input-fields").style.opacity = "0.5";
+        document.getElementById("input-fields").style.pointerEvents = "none";
+        this.classList.add("hidden");
         document.getElementById("otp-request-container").classList.remove("hidden");
+        showToast("Details verified! Send OTP to continue.", "success");
     } else {
-        alert("Verification Failed! Details do not match our records.");
+        showToast("Details don't match our records. Please try again.", "error");
+        // Shake the card for feedback
+        const card = document.getElementById("student-login-form");
+        card.style.animation = "none";
+        card.offsetHeight; // reflow
+        card.style.animation = "shake 0.4s ease";
     }
 };
 
-// STEP 2: Send OTP via EmailJS
-document.getElementById("send-otp-btn").onclick = function() {
+// STEP 2 — Send OTP
+document.getElementById("send-otp-btn").onclick = function () {
     generatedOTP = Math.floor(1000 + Math.random() * 9000).toString();
-    
     this.disabled = true;
-    this.innerText = "Sending Code...";
+    this.textContent = "Sending…";
 
-    const templateParams = {
-        to_name: activeStudent.name,
+    emailjs.send("service_hl3w7ql", "template_42er2vp", {
+        to_name:  activeStudent.name,
         to_email: activeStudent.email,
-        otp_code: generatedOTP // Make sure your EmailJS template uses {{otp_code}}
-    };
-
-    emailjs.send('service_hl3w7ql', 'template_42er2vp', templateParams)
-        .then(() => {
-            alert("Verification code sent to " + activeStudent.email);
-            document.getElementById("otp-request-container").classList.add("hidden");
-            document.getElementById("otp-verify-section").classList.remove("hidden");
-        }, (error) => {
-            alert("Email failed to send. Check console.");
-            console.error("EmailJS Error:", error);
-            this.disabled = false;
-            this.innerText = "Send OTP to Email";
-        });
+        otp_code: generatedOTP
+    }).then(() => {
+        showToast(`OTP sent to ${activeStudent.email}`, "success");
+        document.getElementById("otp-request-container").classList.add("hidden");
+        document.getElementById("otp-verify-section").classList.remove("hidden");
+    }, (err) => {
+        console.error("EmailJS error:", err);
+        showToast("Failed to send OTP. Check console for details.", "error");
+        this.disabled = false;
+        this.textContent = "Retry Send OTP";
+    });
 };
 
-// STEP 3: Final OTP Verification
-document.getElementById("final-login-btn").onclick = function() {
-    const enteredOTP = document.getElementById("login-otp").value.trim();
-
-    if (enteredOTP === generatedOTP) {
+// STEP 3 — Verify OTP
+document.getElementById("final-login-btn").onclick = function () {
+    const entered = document.getElementById("login-otp").value.trim();
+    if (entered === generatedOTP) {
         currentUser = { type: "student", ...activeStudent };
+        showToast(`Welcome, ${currentUser.name}! 👋`, "success");
         showStudentView();
     } else {
-        alert("Invalid Code. Please check your email.");
+        showToast("Incorrect OTP. Please try again.", "error");
     }
 };
 
-/* ================= TEACHER LOGIN ================= */
+/* ===========================
+   LOGIN — TEACHER FLOW
+   =========================== */
 
-/* ================= TEACHER LOGIN ================= */
-
-// Wrap in window.onload to ensure HTML elements exist before attaching events
-window.addEventListener('load', () => {
-    const teacherLoginBtn = document.getElementById("teacher-login-btn");
-    const teacherModal = document.getElementById("teacher-modal");
-    const pinInput = document.getElementById("teacher-pin-input");
-    const cancelBtn = document.getElementById("modal-cancel-btn");
+window.addEventListener("load", () => {
+    const modal      = document.getElementById("teacher-modal");
+    const pinInput   = document.getElementById("teacher-pin-input");
+    const cancelBtn  = document.getElementById("modal-cancel-btn");
     const confirmBtn = document.getElementById("modal-confirm-btn");
 
-    if (teacherLoginBtn) {
-        teacherLoginBtn.onclick = () => {
-            teacherModal.classList.remove("hidden");
-            pinInput.focus();
-        };
-    }
+    document.getElementById("teacher-login-btn").onclick = () => {
+        modal.classList.remove("hidden");
+        pinInput.value = "";
+        pinInput.focus();
+    };
 
-    if (cancelBtn) {
-        cancelBtn.onclick = () => {
-            teacherModal.classList.add("hidden");
+    cancelBtn.onclick = () => {
+        modal.classList.add("hidden");
+        pinInput.value = "";
+    };
+
+    // Close on backdrop click
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.add("hidden");
             pinInput.value = "";
-        };
-    }
+        }
+    });
 
-    if (confirmBtn) {
-        confirmBtn.onclick = () => {
-            if (pinInput.value === "1234") {
-                teacherModal.classList.add("hidden");
-                currentUser = { type: "teacher" };
-                showTeacherView();
-            } else {
-                alert("Wrong PIN. Please try again.");
-                pinInput.value = "";
-            }
-        };
+    confirmBtn.onclick = verifyTeacherPin;
+
+    // Allow Enter key in PIN field
+    pinInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") verifyTeacherPin();
+    });
+
+    function verifyTeacherPin() {
+        if (pinInput.value === TEACHER_PIN) {
+            modal.classList.add("hidden");
+            currentUser = { type: "teacher" };
+            showTeacherView();
+            showToast("Welcome, Teacher! 🏫", "success");
+        } else {
+            showToast("Wrong PIN. Try again.", "error");
+            pinInput.value = "";
+            pinInput.focus();
+        }
     }
 });
-/* ================= VIEW TRANSITIONS ================= */
+
+/* ===========================
+   VIEW TRANSITIONS
+   =========================== */
 
 function showStudentView() {
     document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("student-view").classList.remove("hidden");
+    const view = document.getElementById("student-view");
+    view.classList.remove("hidden");
 
-    document.getElementById("student-info").innerHTML =
-        `<p><strong>Name:</strong> ${currentUser.name}</p>
-         <p><strong>Roll:</strong> ${currentUser.roll}</p>
-         <p><strong>Division:</strong> ${currentUser.division}</p>`;
+    document.getElementById("student-greeting").textContent =
+        `Division ${currentUser.division} · Roll ${currentUser.roll}`;
+
+    document.getElementById("student-info").innerHTML = `
+        <p><strong>👤 Name:</strong> ${currentUser.name}</p>
+        <p><strong>📌 Roll:</strong> ${currentUser.roll}</p>
+        <p><strong>🏷️ Division:</strong> ${currentUser.division}</p>
+        <p><strong>📧 Email:</strong> ${currentUser.email}</p>
+    `;
 
     renderStudentAssignments();
 }
@@ -149,125 +208,229 @@ function showTeacherView() {
     renderTeacherAssignments();
 }
 
-/* ================= CORE LOGIC ================= */
+/* ===========================
+   STUDENT: RENDER ASSIGNMENTS
+   =========================== */
 
 function renderStudentAssignments() {
     const list = document.getElementById("student-assignments-list");
-    list.innerHTML = "";
-    assignments
-        .filter(a => a.division === currentUser.division)
-        .forEach((a) => {
-            const submitted = Array.isArray(a.submissions) && a.submissions.some(s => s.roll === currentUser.roll);
-            list.innerHTML += `
-                <div class="card mb-4 bg-[#252542] p-4 rounded-xl border border-gray-700">
-                    <h3 class="font-bold text-xl">${a.title}</h3>
-                    <p class="text-gray-400 text-sm mb-2">${a.description}</p>
-                    <div class="flex justify-between items-center mt-4">
-                        <span class="text-xs bg-gray-800 px-2 py-1 rounded">${a.subject}</span>
-                        <button class="px-3 py-1 rounded text-sm font-semibold ${submitted ? "bg-green-500" : "bg-gray-500"}">
-                            ${submitted ? "✓ Submitted" : "Pending"}
-                        </button>
-                    </div>
-                </div>`;
-        });
+    const myAssignments = assignments.filter(a => a.division === currentUser.division);
+
+    if (myAssignments.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <p>No assignments yet for your division.</p>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = myAssignments.map(a => {
+        const submitted = Array.isArray(a.submissions) &&
+            a.submissions.some(s => s.roll === currentUser.roll);
+        const due = formatDate(a.due);
+
+        return `
+        <div class="assign-card">
+            <div class="assign-card-top">
+                <div>
+                    <div class="assign-title">${escapeHTML(a.title)}</div>
+                    <div class="assign-desc">${escapeHTML(a.description || "No description provided.")}</div>
+                </div>
+                <span class="status-badge ${submitted ? "status-submitted" : "status-pending"}">
+                    ${submitted ? "✓ Done" : "Pending"}
+                </span>
+            </div>
+            <div class="assign-footer">
+                <span class="tag">📚 ${escapeHTML(a.subject)}</span>
+                <span class="tag">📅 ${due}</span>
+            </div>
+        </div>`;
+    }).join("");
 }
 
+/* ===========================
+   TEACHER: RENDER ASSIGNMENTS
+   =========================== */
+
 function renderTeacherAssignments() {
-    const list = document.getElementById("teacher-assignments-list");
+    const list   = document.getElementById("teacher-assignments-list");
     const detail = document.getElementById("assignment-detail-view");
     detail.classList.add("hidden");
     list.classList.remove("hidden");
-    list.innerHTML = "";
-    assignments.forEach((a, index) => {
-        list.innerHTML += `
-            <div class="card mb-4 bg-[#252542] p-4 rounded-xl cursor-pointer border border-gray-700" onclick="openAssignment(${index})">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <h3 class="font-bold text-lg">${a.title}</h3>
-                        <p class="text-xs text-gray-400">Div ${a.division} • ${a.subject}</p>
-                    </div>
-                    <button onclick="event.stopPropagation(); deleteAssignment(${index})" class="bg-red-500/20 text-red-500 p-2 rounded-lg hover:bg-red-500 hover:text-white transition">Delete</button>
-                </div>
+
+    if (assignments.length === 0) {
+        list.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <p>No assignments created yet. Create one above!</p>
             </div>`;
-    });
+        return;
+    }
+
+    list.innerHTML = assignments.map((a, i) => {
+        const count     = Array.isArray(a.submissions) ? a.submissions.length : 0;
+        const total     = VALID_STUDENTS.filter(s => s.division === a.division).length;
+        const pct       = total > 0 ? Math.round((count / total) * 100) : 0;
+
+        return `
+        <div class="teacher-assign-card" onclick="openAssignment(${i})">
+            <div class="tac-info" style="flex:1; min-width:0;">
+                <h3>${escapeHTML(a.title)}</h3>
+                <p>Div ${a.division} · ${escapeHTML(a.subject)} · ${formatDate(a.due)}</p>
+                <div class="progress-bar" style="margin-top:0.5rem">
+                    <div class="progress-fill" style="width:${pct}%"></div>
+                </div>
+                <p style="margin-top:0.25rem; font-size:0.68rem;">${count}/${total} submitted</p>
+            </div>
+            <button class="btn-delete"
+                onclick="event.stopPropagation(); deleteAssignment(${i})">
+                🗑 Delete
+            </button>
+        </div>`;
+    }).join("");
 }
 
+/* ===========================
+   TEACHER: OPEN ASSIGNMENT DETAIL
+   =========================== */
+
 function openAssignment(index) {
-    const a = assignments[index];
+    const a      = assignments[index];
     const detail = document.getElementById("assignment-detail-view");
-    const list = document.getElementById("teacher-assignments-list");
-    const form = document.getElementById("teacher-form");
+    const list   = document.getElementById("teacher-assignments-list");
+    const form   = document.getElementById("teacher-form").closest(".teacher-form-card");
 
     list.classList.add("hidden");
     form.classList.add("hidden");
     detail.classList.remove("hidden");
 
     if (!Array.isArray(a.submissions)) a.submissions = [];
-    const studentsInDivision = VALID_STUDENTS.filter(s => s.division === a.division);
 
-    let html = `
-        <div class="mb-6">
-            <h2 class="text-2xl font-bold">${a.title}</h2>
-            <p class="text-gray-400">${a.description}</p>
+    const studentsInDiv = VALID_STUDENTS.filter(s => s.division === a.division);
+    const submittedCount = a.submissions.length;
+
+    const studentRows = studentsInDiv.map(student => {
+        const done = a.submissions.some(s => s.roll === student.roll);
+        return `
+        <div class="student-row">
+            <div>
+                <div class="student-row-name">${escapeHTML(student.name)}</div>
+                <div class="student-row-roll">Roll #${student.roll}</div>
+            </div>
+            <button class="btn-mark ${done ? "mark-done" : "mark-pending"}"
+                onclick="toggleSubmission(${index}, '${student.roll}', '${escapeAttr(student.name)}')">
+                ${done ? "✓ Submitted" : "Mark Done"}
+            </button>
+        </div>`;
+    }).join("");
+
+    detail.innerHTML = `
+        <div class="detail-header">
+            <h2>${escapeHTML(a.title)}</h2>
+            <p>${escapeHTML(a.description || "")} · Due: ${formatDate(a.due)}</p>
         </div>
-        <h3 class="font-bold mb-4 text-[#f72585]">Class List (Division ${a.division})</h3>
+        <div class="detail-body">
+            <div class="class-list-title">
+                Division ${a.division} · ${submittedCount}/${studentsInDiv.length} Submitted
+            </div>
+            ${studentRows.length ? studentRows : '<p style="color:var(--text-muted);font-size:0.8rem;">No students in this division.</p>'}
+        </div>
+        <button class="btn-back" id="back-btn">← Back to List</button>
     `;
 
-    studentsInDivision.forEach(student => {
-        const submitted = a.submissions.some(s => s.roll === student.roll);
-        html += `
-            <div class="bg-[#1e1f3a] p-4 rounded-lg mb-3 flex justify-between items-center border border-gray-800">
-                <span>Roll ${student.roll}: ${student.name}</span>
-                <button onclick="toggleTeacherSubmission(${index}, '${student.roll}', '${student.name}')"
-                    class="px-4 py-2 rounded-lg text-xs font-bold ${submitted ? 'bg-cyan-500' : 'bg-gray-700 text-gray-400'}">
-                    ${submitted ? '✓ MARKED' : 'MARK SUBMITTED'}
-                </button>
-            </div>`;
-    });
-
-    html += `<button id="back-btn" class="mt-4 bg-pink-500 px-8 py-2 rounded-lg font-bold">Back to List</button>`;
-    detail.innerHTML = html;
     document.getElementById("back-btn").onclick = () => {
         renderTeacherAssignments();
         form.classList.remove("hidden");
     };
 }
 
-function toggleTeacherSubmission(assignIndex, roll, name) {
-    const assignment = assignments[assignIndex];
-    if (!Array.isArray(assignment.submissions)) assignment.submissions = [];
-    const existingIndex = assignment.submissions.findIndex(s => s.roll === roll);
-    if (existingIndex !== -1) {
-        assignment.submissions.splice(existingIndex, 1);
+/* ===========================
+   TEACHER: TOGGLE SUBMISSION
+   =========================== */
+
+function toggleSubmission(assignIndex, roll, name) {
+    const a = assignments[assignIndex];
+    if (!Array.isArray(a.submissions)) a.submissions = [];
+
+    const idx = a.submissions.findIndex(s => s.roll === roll);
+    if (idx !== -1) {
+        a.submissions.splice(idx, 1);
+        showToast(`${name} marked as pending.`, "info");
     } else {
-        assignment.submissions.push({ roll, name });
+        a.submissions.push({ roll, name });
+        showToast(`${name} marked as submitted! ✓`, "success");
     }
+
     saveAssignments();
-    openAssignment(assignIndex);
+    openAssignment(assignIndex); // re-render detail
 }
 
+/* ===========================
+   TEACHER: DELETE ASSIGNMENT
+   =========================== */
+
 function deleteAssignment(index) {
-    if(confirm("Delete this assignment?")) {
+    const title = assignments[index].title;
+    if (confirm(`Delete "${title}"? This cannot be undone.`)) {
         assignments.splice(index, 1);
         saveAssignments();
         renderTeacherAssignments();
+        showToast("Assignment deleted.", "info");
     }
 }
 
-document.getElementById("teacher-form").onsubmit = function(e) {
+/* ===========================
+   TEACHER: CREATE ASSIGNMENT
+   =========================== */
+
+document.getElementById("teacher-form").onsubmit = function (e) {
     e.preventDefault();
+
+    const title   = document.getElementById("assign-title").value.trim();
+    const subject = document.getElementById("assign-subject").value.trim();
+
+    if (!title || !subject) {
+        showToast("Title and Subject are required.", "error");
+        return;
+    }
+
     assignments.push({
-        title: document.getElementById("assign-title").value,
-        subject: document.getElementById("assign-subject").value,
-        description: document.getElementById("assign-desc").value,
-        due: document.getElementById("assign-due").value,
-        division: document.getElementById("assign-division").value,
+        title,
+        subject,
+        description: document.getElementById("assign-desc").value.trim(),
+        due:         document.getElementById("assign-due").value,
+        division:    document.getElementById("assign-division").value,
         submissions: []
     });
+
     saveAssignments();
     this.reset();
     renderTeacherAssignments();
+    showToast(`"${title}" created! 📋`, "success");
 };
 
-document.getElementById("student-logout-btn").onclick = 
+/* ===========================
+   LOGOUT
+   =========================== */
+
+document.getElementById("student-logout-btn").onclick =
 document.getElementById("teacher-logout-btn").onclick = () => location.reload();
+
+/* ===========================
+   XSS HELPERS
+   =========================== */
+
+function escapeHTML(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+}
+
+function escapeAttr(str) {
+    if (!str) return "";
+    return String(str).replace(/'/g, "\\'");
+}

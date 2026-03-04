@@ -5,101 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment Manager</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen flex items-center justify-center bg-[#1a1a2e]">
+<body>
 
-    <div id="app-container" class="w-full max-w-md px-4 py-8">
-        
-        <div id="login-screen" class="text-center">
-            <h1 class="text-4xl font-bold mb-10 text-white">Assignment Manager</h1>
-            
-            <div id="role-selection" class="flex flex-row justify-center gap-4">
-                <button id="student-login-btn" class="w-40 py-4 rounded-2xl font-bold bg-[#4cc9f0] text-gray-900 shadow-lg hover:scale-105 transition-transform">
-                    Student Login
+    <!-- Animated background -->
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div id="app-container">
+
+        <!-- ===== LOGIN SCREEN ===== -->
+        <div id="login-screen">
+            <div class="brand-header">
+                <div class="brand-icon">📚</div>
+                <h1 class="brand-title">AssignTrack</h1>
+                <p class="brand-sub">Classroom Assignment Manager</p>
+            </div>
+
+            <div id="role-selection" class="role-grid">
+                <button id="student-login-btn" class="role-card role-student">
+                    <span class="role-icon">🎓</span>
+                    <span class="role-label">Student</span>
+                    <span class="role-desc">View & track your assignments</span>
                 </button>
-                <button id="teacher-login-btn" class="w-40 py-4 rounded-2xl font-bold bg-[#f72585] text-white shadow-lg hover:scale-105 transition-transform">
-                    Teacher Login
+                <button id="teacher-login-btn" class="role-card role-teacher">
+                    <span class="role-icon">🏫</span>
+                    <span class="role-label">Teacher</span>
+                    <span class="role-desc">Create & manage assignments</span>
                 </button>
             </div>
 
-            <div id="student-login-form" class="hidden space-y-4 bg-[#252542] p-6 rounded-2xl shadow-2xl mt-8 border border-gray-700">
-                <h2 class="text-xl font-bold text-[#4cc9f0]">Student Verification</h2>
-                
-                <div id="input-fields" class="space-y-3 text-left">
-                    <input id="login-div" type="text" placeholder="Division (1-5)" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
-                    <input id="login-name" type="text" placeholder="Full Name" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
-                    <input id="login-roll" type="text" placeholder="Roll Number" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
-                    <input id="login-email" type="email" placeholder="Registered Email" class="w-full p-3 rounded-xl bg-[#1a1a2e] border border-gray-600 text-white outline-none">
+            <!-- Student Login Form -->
+            <div id="student-login-form" class="auth-card hidden">
+                <div class="auth-card-header student-header">
+                    <h2>Student Verification</h2>
+                    <p>Enter your details to continue</p>
                 </div>
-                
-                <button id="verify-details-btn" class="w-full py-3 rounded-xl font-bold bg-[#4cc9f0] text-[#1a1a2e]">Verify Details</button>
 
-                <div id="otp-request-container" class="hidden space-y-3 pt-4 border-t border-gray-600">
-                    <p class="text-green-400 font-bold">✅ Details Matched!</p>
-                    <button id="send-otp-btn" class="w-full py-3 rounded-xl font-bold bg-[#4cc9f0] text-[#1a1a2e]">Send OTP to Email</button>
+                <div id="input-fields" class="field-group">
+                    <div class="field-wrap">
+                        <label>Division</label>
+                        <input id="login-div" type="text" placeholder="e.g. 1" />
+                    </div>
+                    <div class="field-wrap">
+                        <label>Full Name</label>
+                        <input id="login-name" type="text" placeholder="Your full name" />
+                    </div>
+                    <div class="field-wrap">
+                        <label>Roll Number</label>
+                        <input id="login-roll" type="text" placeholder="e.g. 12" />
+                    </div>
+                    <div class="field-wrap">
+                        <label>Registered Email</label>
+                        <input id="login-email" type="email" placeholder="yourname@email.com" />
+                    </div>
                 </div>
-                
-                <div id="otp-verify-section" class="hidden space-y-3 pt-4 border-t border-gray-600 text-left">
-                    <label class="text-sm text-gray-400">Enter 4-digit code:</label>
-                    <input id="login-otp" type="text" placeholder="0000" maxlength="4" class="w-full p-3 text-center tracking-widest text-xl rounded-xl bg-[#1a1a2e] border border-gray-600 text-white">
-                    <button id="final-login-btn" class="w-full py-3 rounded-xl font-bold bg-green-500 text-white">Login Now</button>
+
+                <button id="verify-details-btn" class="btn btn-primary">Verify Details →</button>
+
+                <div id="otp-request-container" class="hidden otp-section">
+                    <div class="success-badge">✅ Details Matched!</div>
+                    <button id="send-otp-btn" class="btn btn-primary">Send OTP to Email</button>
                 </div>
-                
-                <button onclick="location.reload()" class="text-gray-400 text-xs underline mt-2 block mx-auto">Back</button>
+
+                <div id="otp-verify-section" class="hidden otp-section">
+                    <div class="field-wrap">
+                        <label>Enter 4-digit OTP</label>
+                        <input id="login-otp" type="text" placeholder="0000" maxlength="4" class="otp-input" />
+                    </div>
+                    <button id="final-login-btn" class="btn btn-success">Login Now →</button>
+                </div>
+
+                <button class="btn-text" onclick="location.reload()">← Back to home</button>
             </div>
         </div>
 
+        <!-- ===== STUDENT VIEW ===== -->
         <div id="student-view" class="hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-white">Your Assignments</h1>
-                <button id="student-logout-btn" class="px-4 py-2 bg-gray-700 rounded-lg text-sm text-white">Logout</button>
+            <div class="view-topbar">
+                <div>
+                    <h1 class="view-title">My Assignments</h1>
+                    <p class="view-subtitle" id="student-greeting"></p>
+                </div>
+                <button id="student-logout-btn" class="btn-logout">Logout</button>
             </div>
-            <div id="student-info" class="mb-6 p-4 bg-[#252542] rounded-xl border-l-4 border-[#4cc9f0] text-white"></div>
+
+            <div id="student-info" class="info-card student-info-card"></div>
+
+            <div class="section-label">📋 Your Tasks</div>
             <div id="student-assignments-list"></div>
         </div>
 
+        <!-- ===== TEACHER VIEW ===== -->
         <div id="teacher-view" class="hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-2xl font-bold text-white">Teacher Panel</h1>
-                <button id="teacher-logout-btn" class="px-4 py-2 bg-gray-700 rounded-lg text-sm text-white">Logout</button>
+            <div class="view-topbar">
+                <div>
+                    <h1 class="view-title">Teacher Panel</h1>
+                    <p class="view-subtitle">Manage divisions & assignments</p>
+                </div>
+                <button id="teacher-logout-btn" class="btn-logout">Logout</button>
             </div>
-            
-            <form id="teacher-form" class="space-y-3 mb-8 bg-[#252542] p-4 rounded-xl border border-gray-700">
-                <input id="assign-title" placeholder="Assignment Title" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600" required>
-                <input id="assign-subject" placeholder="Subject" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600" required>
-                <textarea id="assign-desc" placeholder="Description" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600"></textarea>
-                <input id="assign-due" type="date" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600">
-                <select id="assign-division" class="w-full p-2 rounded bg-[#1a1a2e] border border-gray-600">
-                    <option value="1">Division 1</option>
-                    <option value="2">Division 2</option>
-                </select>
-                <button type="submit" class="w-full py-2 bg-[#f72585] rounded font-bold">Create Assignment</button>
-            </form>
 
+            <div class="teacher-form-card">
+                <div class="form-card-header">
+                    <span>➕ New Assignment</span>
+                </div>
+                <form id="teacher-form">
+                    <div class="form-row">
+                        <div class="field-wrap">
+                            <label>Title</label>
+                            <input id="assign-title" placeholder="Assignment title" required />
+                        </div>
+                        <div class="field-wrap">
+                            <label>Subject</label>
+                            <input id="assign-subject" placeholder="e.g. Math" required />
+                        </div>
+                    </div>
+                    <div class="field-wrap">
+                        <label>Description</label>
+                        <textarea id="assign-desc" placeholder="Describe the assignment..." rows="3"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="field-wrap">
+                            <label>Due Date</label>
+                            <input id="assign-due" type="date" />
+                        </div>
+                        <div class="field-wrap">
+                            <label>Division</label>
+                            <select id="assign-division">
+                                <option value="1">Division 1</option>
+                                <option value="2">Division 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-teacher-submit">Create Assignment</button>
+                </form>
+            </div>
+
+            <div class="section-label">📂 All Assignments</div>
             <div id="teacher-assignments-list"></div>
-            <div id="assignment-detail-view" class="hidden bg-[#252542] p-6 rounded-2xl border border-gray-700"></div>
+            <div id="assignment-detail-view" class="hidden detail-view"></div>
+        </div>
+
+    </div>
+
+    <!-- ===== TEACHER PIN MODAL ===== -->
+    <div id="teacher-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-icon">🔐</div>
+            <h2 class="modal-title">Teacher Access</h2>
+            <p class="modal-sub">Enter your 4-digit PIN to continue</p>
+            <input id="teacher-pin-input" type="password" maxlength="4" placeholder="• • • •" class="pin-input" />
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="btn btn-cancel">Cancel</button>
+                <button id="modal-confirm-btn" class="btn btn-teacher-confirm">Login</button>
+            </div>
         </div>
     </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden"></div>
 
     <script src="script.js"></script>
-   <div id="teacher-modal" class="modal-overlay hidden">
-    <div class="modal-content">
-        <h2 class="modal-title">Teacher Access</h2>
-        <p class="modal-subtitle">Enter your 4-digit PIN</p>
-        
-        <input id="teacher-pin-input" type="password" maxlength="4" placeholder="••••">
-        
-        <div class="modal-button-group">
-            <button id="modal-cancel-btn" class="btn-cancel">Cancel</button>
-            <button id="modal-confirm-btn" class="btn-login">Login</button>
-        </div>
-    </div>
-</div>
-
-<script src="script.js"></script> </body>
-</html>
-</div>
 </body>
 </html>
